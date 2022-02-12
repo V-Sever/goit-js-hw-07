@@ -32,19 +32,22 @@ function onClick(evt) {
   //   console.log(evt.target);
   const bigImageURL = evt.target.dataset.source;
   //   console.log(bigImageURL);
-  instance = basicLightbox.create(`
-    <img src="${bigImageURL}">
-`);
-
-  instance.show(() => {
-    document.addEventListener('keydown', onEscape);
-    console.log('keyboard eventListener add');
+  instance = basicLightbox.create(`<img src="${bigImageURL}">`, {
+    onShow: () => {
+      window.addEventListener('keydown', onEscClick);
+      console.log('keyboard eventListener add');
+    },
+    onClose: () => {
+      window.removeEventListener('keydown', onEscClick);
+      console.log('keyboard eventListener removed');
+    },
   });
+
+  instance.show();
 }
 
-function onEscape(evt) {
-  console.log(evt.code);
+function onEscClick(evt) {
+  console.log(`Pressed: ${evt.code}`);
   if (evt.code !== 'Escape') return;
-  instance.close(document.removeEventListener('keydown', onEscape));
-  console.log('keyboard eventListener removed');
+  instance.close();
 }

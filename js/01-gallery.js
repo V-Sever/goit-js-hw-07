@@ -4,10 +4,18 @@ import { galleryItems } from './gallery-items.js';
 // console.log(galleryItems);
 const refs = {
   gallery: document.querySelector('.gallery'),
-  galleryLinks: [],
 };
 
-let instance = null;
+const instance = basicLightbox.create(`<img class="basicLightbox_img" src="">`, {
+  onShow: () => {
+    window.addEventListener('keydown', onEscClick);
+    console.log('keyboard eventListener add');
+  },
+  onClose: () => {
+    window.removeEventListener('keydown', onEscClick);
+    console.log('keyboard eventListener removed');
+  },
+});
 
 function render(array) {
   const markup = array
@@ -21,27 +29,16 @@ function render(array) {
 
 render(galleryItems);
 
-refs.galleryLinks = document.querySelectorAll('.gallery__link');
-
-refs.galleryLinks.forEach(link => link.addEventListener('click', evt => evt.preventDefault()));
-
 refs.gallery.addEventListener('click', onClick);
 
 function onClick(evt) {
+  evt.preventDefault();
+
   if (evt.target.classList.value !== 'gallery__image') return;
-  //   console.log(evt.target);
+
   const bigImageURL = evt.target.dataset.source;
-  //   console.log(bigImageURL);
-  instance = basicLightbox.create(`<img src="${bigImageURL}">`, {
-    onShow: () => {
-      window.addEventListener('keydown', onEscClick);
-      console.log('keyboard eventListener add');
-    },
-    onClose: () => {
-      window.removeEventListener('keydown', onEscClick);
-      console.log('keyboard eventListener removed');
-    },
-  });
+
+  instance.element().querySelector('.basicLightbox_img').setAttribute('src', bigImageURL);
 
   instance.show();
 }
